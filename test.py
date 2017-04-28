@@ -1,37 +1,22 @@
-# -*- coding:utf-8 -*-
+# -*- coding: UTF-8 -*-     
+import requests
+import json
 import urllib
-import urllib2
-import re
-from bs4 import BeautifulSoup
-import codecs
 
-url = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2015/13/1301.html'
-user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
-headers = { 'User-Agent' : user_agent }
-try:
-    request = urllib2.Request(url,headers = headers)
-    response = urllib2.urlopen(request)
-    soup = BeautifulSoup(response.read(),"html.parser")
-    #items = soup.find_all(href=re.compile("html"))
-    
-    for tag in soup.find_all(class_=re.compile("countytr")):
-        tempdata = []
-        temphref = ''
-        for itag in tag.children:
-            if itag.a:
-                temphref = itag.a['href']
-            tempdata.append(itag.get_text())
-        #title.get_text().isdigit()
-        aa = {
-            'code':tempdata[0],
-            'name':tempdata[1]
-        }
-        print aa
-        with codecs.open('G:/hello.csv', 'a','utf-8') as f:
-            f.write(aa['code']+","+aa['name']+"\n")
-    #print soup.title;
-except urllib2.URLError, e:
-    if hasattr(e,"code"):
-        print e.code
-    if hasattr(e,"reason"):
-        print e.reason
+headers = {}
+payload = {"corpcode":"xxx","username":"xxx","password":"xxx","source":"xxx"}
+r = requests.post("xxx", data=json.dumps(payload))
+r.encoding = 'utf-8'
+ret = json.loads(r.text)
+aa = ret['message']['personnelName']
+print aa
+headers = {
+ 
+}
+#针对中文header的处理存在问题
+#print urllib.quote(aa,'utf-8')
+
+pr = requests.get('xxx',headers=headers)
+pr.encoding = 'utf-8'
+ret = json.loads(pr.text)
+print pr.text
