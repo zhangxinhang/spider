@@ -8,8 +8,8 @@ import codecs
 class PCC:
   """docstring for PCC"""
   def __init__(self):
-    self.base_url = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2015/'
-    self.current_url='http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2015/index.html'
+    self.year = '2015';
+    self.base_url = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/'+self.year+'/'
     self.user_agent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'
     #初始化headers
     self.headers = { 'User-Agent' : self.user_agent }
@@ -19,7 +19,7 @@ class PCC:
 
 
   def writeToCVS(self,obj):
-    with codecs.open('G:/pcc.csv', 'a','utf-8') as f:
+    with codecs.open(self.year+'pcc.csv', 'a','utf-8') as f:
         f.write(obj['code']+","+obj['name']+"\n")
 
   def getPageData(self,url):
@@ -29,7 +29,7 @@ class PCC:
         request = urllib2.Request(url,headers = self.headers)
         #利用urlopen获取页面代码
         response = urllib2.urlopen(request)
-        #将页面转化为UTF-8编码
+        #读取数据
         pageData = response.read()
         return pageData
 
@@ -48,12 +48,12 @@ class PCC:
     for field in soup.find_all(href=re.compile("html")):
         city_href = field['href'];
         tempObj = {
-          'code':city_href,
+          'code':city_href.replace('.html','0000000000'),
           'name':field.get_text()
         }
         print tempObj
         self.writeToCVS(tempObj)
-        self.getCityData(field['href'],'citytr')
+        self.getCityData(city_href,'citytr')
     return self.datas
 
   def getCityData(self,url,type):
